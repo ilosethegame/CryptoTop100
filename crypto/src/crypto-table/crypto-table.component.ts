@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CryptoService } from '../services/crypto.service';
-import { CryptoCurrency } from '../models/crypto-currency.class';
+import { Subscription } from 'rxjs/Subscription';
+import { CryptoCurrency, SortValues } from '../models';
 import { element } from 'protractor';
+import { sortValues } from '../models/datasets';
 
 @Component({
     selector: 'crypto-table',
@@ -9,20 +11,37 @@ import { element } from 'protractor';
     styleUrls: ['./crypto-table.component.css']
 
 })
-export class CryptoTableComponent {
+export class CryptoTableComponent implements OnInit{
     public top100Cryptos: CryptoCurrency[];
-    public sortValues: any = { rank: false, marketCap: true, volume: false, change24: false, price: false, name: false };
+    public filteredCryptos: CryptoCurrency[];
+    public sortValues: SortValues = sortValues;
+    public priceUnit: string = 'USD';
+    public top100CryptosSub: Subscription;
 
     constructor(public cryptoService: CryptoService) {
+    }
+
+    public ngOnInit(): void {
         this.getTop100Cryptos();
     }
 
+    public ngOnDestroy(): void {
+        this.top100CryptosSub.unsubscribe();
+    }
+
     public getTop100Cryptos(): void {
-        this.cryptoService.getAllCryptos().subscribe((data?: any) => {
-            this.top100Cryptos = data.map((element: any) => {
-                return new CryptoCurrency(element);
-            });
+        this.top100CryptosSub = this.cryptoService.getAllCryptos().subscribe((data?: CryptoCurrency[]) => {
+            this.top100Cryptos = data;
+            this.filteredCryptos = this.top100Cryptos;
         });
+    }
+
+    public listenFilterCryptos(e: CryptoCurrency[]): void {
+        this.filteredCryptos = e; 
+    }
+
+    public listenPriceUnit(e: string): void {
+        this.priceUnit = e;
     }
 
     public sortString(sortValue: boolean): void {
@@ -53,7 +72,7 @@ export class CryptoTableComponent {
         }
     }
 
-    public sortNumeric(sortValue: boolean, key: string) {
+    public sortNumeric(sortValue: boolean, key: string): void {
         if (sortValue) {
             this.top100Cryptos = this.top100Cryptos.sort((a: CryptoCurrency, b: CryptoCurrency) => {
                 return a[key] - b[key];

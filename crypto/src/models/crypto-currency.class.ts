@@ -24,7 +24,7 @@ export class CryptoCurrency {
         this.symbol = defaults.symbol;
         this.rank = Number(defaults.rank);
         this.price_usd = Number(defaults.price_usd);
-        this.price_btc = Number(this.price_btc);
+        this.price_btc = Number(defaults.price_btc);
         this.market_cap_usd = Number(defaults.market_cap_usd);
         this.available_supply = Number(defaults.available_supply);
         this.total_supply = Number(defaults.total_supply);
