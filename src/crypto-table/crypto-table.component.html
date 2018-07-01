@@ -1,6 +1,6 @@
 <crypto-filter [cryptos]="top100Cryptos" (filteredCryptosEvent)="listenFilterCryptos($event)" (priceUnitEvent)="listenPriceUnit($event)"></crypto-filter>
 
-<table class="table table-dark table-striped table-hover borderWhiteAll">
+<table wt-responsive-table class="table table-dark table-striped table-hover borderWhiteAll">
     <thead class="borderWhiteAll">
         <tr>
             <th class="borderWhiteAll clickHand" (click)="sortNumeric(sortValues.rank, 'rank'); sortValues.rank = !sortValues.rank">#</th>
